@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="hi"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>30Q - Gravitation Hindi | Gyankshetra</title>
+<style>
+:root{--green:#166534;--lgreen:#dcfce7;--mid:#16a34a}
+body{margin:0;font-family:system-ui;background:#f0fdf4}
+.header{background:var(--green);color:#fff;padding:14px 16px;display:flex;gap:10px;align-items:center}
+.home{font-size:28px;font-weight:900}.logo{font-weight:800;font-size:19px}
+.subbar{background:var(--lgreen);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.badge{background:var(--green);color:#fff;padding:6px 12px;border-radius:20px;font-weight:800;border:none;cursor:pointer}
+.timer{background:#fff;color:var(--green);border:1.5px solid var(--green);padding:5px 10px;border-radius:20px;font-weight:800;font-size:13px}
+.card{background:#fff;margin:14px;border-radius:18px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,.07)}
+.opt{border:1.6px solid #d1d5db;padding:12px;border-radius:12px;margin:8px 0;cursor:pointer}
+.opt.sel{border-color:var(--green);background:var(--lgreen);font-weight:700;color:#14532d}
+.btn{flex:1;padding:13px;border-radius:12px;font-weight:800;border:none;cursor:pointer}
+.btn-g{background:var(--green);color:#fff}.btn-o{background:#fff;border:2px solid var(--green);color:var(--green)}
+.fact{background:#f0fdf4;border-left:4px solid var(--mid);padding:8px 10px;margin:6px 0;border-radius:6px;font-size:13px}
+#qPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;align-items:center;justify-content:center}
+#qPopup.show{display:flex}.pbox{background:#fff;width:92%;max-width:360px;border-radius:20px;padding:16px;max-height:80vh;overflow:auto}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+.qn{padding:10px;text-align:center;border-radius:10px;background:#e5e7eb;font-weight:700;cursor:pointer}
+.qn.act{background:var(--green);color:#fff}.qn.done{background:#bbf7d0}
+.tele{background:#229ED9;color:#fff}
+</style></head>
+<body>
+<div class="header"><span class="home">⌂</span><span class="logo">Gyankshetra</span></div>
+<div class="subbar"><div style="display:flex;gap:8px;align-items:center"><span id="chap" style="font-weight:700;color:#14532d;font-size:14px">30Q - गुरुत्वाकर्षण</span><button class="badge" id="qbadge" onclick="openPopup()">1/30Q</button></div><span class="timer" id="timer">29:59</span></div>
+
+<div id="p-start" style="padding:18px"><h3>30Q - गुरुत्वाकर्षण के लिए</h3><p style="color:#555;font-size:14px">गुरुत्वाकर्षण के 30 प्रश्न | समय: 30 मिनट</p><input id="cName" placeholder="अपना नाम लिखें..." style="width:100%;padding:14px;border-radius:12px;border:1.5px solid #ccc;margin:8px 0"><button class="btn btn-g" style="width:100%" onclick="startQuiz()">शुरू करें →</button></div>
+
+<div id="p-quiz" style="display:none"><div class="card"><div id="qL" style="color:#166534;font-weight:700;font-size:13px"></div><h3 id="qT"></h3><div id="opts"></div></div><div style="padding:0 14px"><div style="height:7px;background:#bbf7d0;border-radius:10px"><div id="bar" style="height:100%;background:#166534;width:0%"></div></div></div><div style="display:flex;gap:10px;padding:12px 14px"><button class="btn btn-o" onclick="prev()">पिछला</button><button class="btn btn-g" id="nBtn" onclick="next()">अगला →</button></div></div>
+
+<div id="p-result" style="display:none;padding:14px"><div class="card" style="text-align:center"><h1 id="score" style="color:#166534"></h1><p id="scoreP"></p></div><button class="btn btn-g" style="width:100%" onclick="location.reload()">फिर से शुरू ↻</button><button class="btn btn-o" style="width:100%;margin:8px 0" onclick="toggleReview()">Review</button><button class="btn tele" style="width:100%" onclick="shareTG()">Telegram पर शेयर ↗</button><div id="reviewBox" style="display:none;margin-top:14px"><div class="card" id="analysisCard"></div><div style="display:flex;justify-content:space-between"><button class="btn btn-o" onclick="slidePrev()">‹ पिछला</button><span id="slideNo" style="padding:12px;font-weight:700"></span><button class="btn btn-g" onclick="slideNext()">अगला ›</button></div></div></div>
+
+<div id="qPopup" onclick="if(event.target==this)closePopup()"><div class="pbox"><div style="display:flex;justify-content:space-between"><b>सभी प्रश्न</b><span onclick="closePopup()" style="cursor:pointer">✕</span></div><div class="grid" id="grid"></div></div></div>
+
+<script>
+const Q=[
+{q:"गुरुत्वाकर्षण का सार्वत्रिक नियम किसने दिया?",opts:["न्यूटन","गैलीलियो","केपलर","आइंस्टीन"],ans:0,analysis:"न्यूटन ने 1687 में Principia में दिया। F=Gm1m2/r²।",facts:["तथ्य 1: यह नियम NCERT कक्षा 9 अध्याय 10 से है।","तथ्य 2: सूत्र F=Gm1m2/r² याद रखें।","तथ्य 3: G का मान 6.67×10^-11 है।","तथ्य 4: पृथ्वी-चंद्रमा पर यही नियम लगता है।","तथ्य 5: इसी से केपलर के नियम सिद्ध होते हैं।"]},
+{q:"G का मान कितना होता है?",opts:["6.67×10^-11 Nm²/kg²","9.8 m/s²","6.67×10^-9","6×10^-11"],ans:0,analysis:"G सार्वत्रिक गुरुत्वाकर्षण नियतांक है, मान 6.67×10^-11।",facts:["तथ्य 1: कैवेंडिश ने पहली बार मापा था।","तथ्य 2: SI मात्रक Nm²/kg² है।","तथ्य 3: बहुत छोटा मान इसलिए गुरुत्व सबसे कमजोर बल।","तथ्य 4: पूरे ब्रह्मांड में समान रहता है।","तथ्य 5: संख्यात्मक प्रश्नों में G का उपयोग होता है।"]},
+{q:"पृथ्वी पर g का मान कितना होता है?",opts:["9.8 m/s²","10 m/s²","6.67 m/s²","0 m/s²"],ans:0,analysis:"g=GM/R² से 9.8 m/s² आता है। ध्रुव पर 9.83, विषुवत पर 9.78।",facts:["तथ्य 1: g≈9.8 को लगभग 10 मान लेते हैं।","तथ्य 2: g=GM/R² से बनता है।","तथ्य 3: ऊंचाई पर घटता है।","तथ्य 4: केंद्र पर शून्य हो जाता है।","तथ्य 5: चंद्रमा पर 1/6 होता है।"]},
+{q:"मुक्त रूप से गिरने पर वजन क्या होता है?",opts:["शून्य","9.8 N","द्रव्यमान के बराबर","बढ़ जाता है"],ans:0,analysis:"मुक्त पतन में आभासी वजन शून्य, भारहीनता महसूस होती है।",facts:["तथ्य 1: N=0 इसलिए भारहीन।","तथ्य 2: ISS में अंतरिक्ष यात्री इसी कारण भारहीन।","तथ्य 3: लिफ्ट नीचे गिरे तो वजन शून्य लगेगा।","तथ्य 4: वास्तविक द्रव्यमान नहीं बदलता।","तथ्य 5: BPSC में भारहीनता पर प्रश्न आता है।"]},
+{q:"केपलर का तीसरा नियम क्या बताता है?",opts:["T² ∝ r³","T ∝ r²","r² ∝ T","T² ∝ r²"],ans:0,analysis:"T², r³ के समानुपाती - कक्षा अवधि का वर्ग त्रिज्या के घन के समानुपाती।",facts:["तथ्य 1: केपलर ने 3 नियम दिए ग्रह गति के।","तथ्य 2: तीसरे नियम से दूरी से अवधि निकलती है।","तथ्य 3: न्यूटन ने केपलर नियम को गुरुत्व से सिद्ध किया।","तथ्य 4: भू-स्थिर उपग्रह का r इसी से निकलता है।","तथ्य 5: T²/r³ = 4π²/GM स्थिरांक।"]},
+{q:"पृथ्वी से पलायन वेग कितना है?",opts:["11.2 km/s","9.8 km/s","7.9 km/s","15 km/s"],ans:0,analysis:"Ve=√2gR =11.2 km/s। इससे कम गति पर वस्तु वापस गिर जाएगी।",facts:["तथ्य 1: Ve=√2GM/R सूत्र।","तथ्य 2: द्रव्यमान पर निर्भर नहीं।","तथ्य 3: चंद्रमा से 2.38 km/s है।","तथ्य 4: 11.2 km/s = 40200 km/h।","तथ्य 5: रॉकेट को इससे ज्यादा गति चाहिए।"]},
+{q:"चंद्रमा पर g पृथ्वी की तुलना में?",opts:["1/6","1/2","1/3","1/10"],ans:0,analysis:"चंद्रमा का द्रव्यमान 1/100 और त्रिज्या 1/4, इसलिए g_moon = g/6 =1.62 m/s²।",facts:["तथ्य 1: चंद्रमा पर वजन 1/6 हो जाता है।","तथ्य 2: इसलिए चंद्रमा पर उछाल ज्यादा ऊंची।","तथ्य 3: g_moon=1.62 m/s²।","तथ्य 4: BPSC में अनुपात पर प्रश्न आता है।","तथ्य 5: मंगल पर g=3.7 m/s²।"]},
+{q:"G का विमीय सूत्र क्या है?",opts:["M^-1 L³ T^-2","M L T^-2","M^-1 L² T^-2","L T^-2"],ans:0,analysis:"F=Gm1m2/r² से G=Fr²/m1m2 => M^-1 L³ T^-2।",facts:["तथ्य 1: विमीय विश्लेषण से निकलता है।","तथ्य 2: g का विमा LT^-2।","तथ्य 3: विमा से सूत्र जांचते हैं।","तथ्य 4: G अदिश राशि है।","तथ्य 5: CGS में मान 6.67e-8 dyne cm²/g²।"]},
+{q:"ऊंचाई पर g कैसे बदलेगा?",opts:["घटता है","बढ़ता है","समान रहता है","शून्य"],ans:0,analysis:"g_h=g(1-2h/R) ऊंचाई बढ़ने पर g घटता है।",facts:["तथ्य 1: एवरेस्ट पर g 9.78 थोड़ा कम।","तथ्य 2: h=R पर g/4 हो जाता है।","तथ्य 3: सूत्र g'=gR²/(R+h)²।","तथ्य 4: उपग्रह में g कम पर शून्य नहीं।","तथ्य 5: ऊंचाई प्रभाव BPSC संख्यात्मक में।"]},
+{q:"पृथ्वी के केंद्र पर g कितना?",opts:["शून्य","9.8","4.9","अनंत"],ans:0,analysis:"केंद्र पर सब तरफ द्रव्यमान समान, नेट बल शून्य, g=0।",facts:["तथ्य 1: g_d=g(1-d/R) गहराई सूत्र।","तथ्य 2: केंद्र पर वजन शून्य।","तथ्य 3: केंद्र पर दाब अधिकतम।","तथ्य 4: g गहराई पर रैखिक घटता है।","तथ्य 5: ग्राफ V आकार का होता है।"]},
+{q:"गुरुत्वाकर्षण बल किस प्रकार का बल है?",opts:["केंद्रीय और संरक्षी","अ-केंद्रीय","घर्षण","छद्म"],ans:0,analysis:"केंद्रीय बल केंद्र की ओर, संरक्षी है कार्य पथ पर निर्भर नहीं।",facts:["तथ्य 1: केंद्रीय बल में कोणीय संवेग संरक्षित।","तथ्य 2: संरक्षी में यांत्रिक ऊर्जा संरक्षित।","तथ्य 3: स्थिर वैद्युत भी केंद्रीय और संरक्षी।","तथ्य 4: घर्षण असंरक्षी है।","तथ्य 5: स्थितिज ऊर्जा केवल संरक्षी में परिभाषित।"]},
+{q:"ISS में भारहीनता क्यों होती है?",opts:["मुक्त पतन की वजह से","G शून्य","द्रव्यमान शून्य","निर्वात"],ans:0,analysis:"ISS लगातार मुक्त पतन में है पृथ्वी की ओर, इसलिए N=0।",facts:["तथ्य 1: ISS 400km पर है g~8.7 फिर भी भारहीन।","तथ्य 2: मुक्त पतन में आभासी वजन शून्य।","तथ्य 3: G शून्य नहीं होता ISS पर।","तथ्य 4: भारहीनता में द्रव व्यवहार अलग।","तथ्य 5: प्रशिक्षण के लिए परवलयिक उड़ान उपयोग।"]},
+{q:"g और G में संबंध क्या है?",opts:["g=GM/R²","G=gM/R²","g=G/R²","G=mg"],ans:0,analysis:"g=GM/R² - g स्थानीय है G सार्वत्रिक।",facts:["तथ्य 1: g=GM/R² से पृथ्वी द्रव्यमान निकाल सकते हैं।","तथ्य 2: G=6.67e-11, g=9.8।","तथ्य 3: G प्रयोगशाला में मापते हैं, g लोलक से।","तथ्य 4: g ग्रह पर अलग, G समान।","तथ्य 5: M=gR²/G से पृथ्वी द्रव्यमान 6e24 kg।"]},
+{q:"द्रव्यमान और वजन में अंतर?",opts:["द्रव्यमान स्थिर, वजन g पर निर्भर","दोनों समान","वजन स्थिर","द्रव्यमान g पर"],ans:0,analysis:"द्रव्यमान पदार्थ की मात्रा स्थिर, वजन=mg g पर निर्भर।",facts:["तथ्य 1: द्रव्यमान kg में, वजन N में।","तथ्य 2: चंद्रमा पर द्रव्यमान समान वजन 1/6।","तथ्य 3: वजन सदिश है, द्रव्यमान अदिश।","तथ्य 4: बीम तुला द्रव्यमान, स्प्रिंग वजन।","तथ्य 5: BPSC में अंतर पर प्रश्न निश्चित है।"]},
+{q:"गुरुत्वीय स्थितिज ऊर्जा का सूत्र?",opts:["-GMm/r","GMm/r","mgh","GM/r"],ans:0,analysis:"U=-GMm/r ऋणात्मक क्योंकि बंधा सिस्टम, अनंत पर शून्य।",facts:["तथ्य 1: ऋणात्मक चिह्न बंधा दिखाता है।","तथ्य 2: mgh छोटे h के लिए सन्निकटन।","तथ्य 3: विभव V=-GM/r।","तथ्य 4: पलायन के लिए U+K=0।","तथ्य 5: ग्राफ अतिपरवलयिक होता है।"]},
+{q:"उपग्रह की कक्षीय वेग कितनी?",opts:["√gR","√2gR","gR","2gR"],ans:0,analysis:"Vo=√GM/r=√gR पृथ्वी के पास ~7.9 km/s।",facts:["तथ्य 1: Vo=7.9 km/s प्रथम कक्षीय।","तथ्य 2: Ve=√2*Vo।","तथ्य 3: ऊंचाई पर Vo कम होता।","तथ्य 4: Vo द्रव्यमान पर निर्भर नहीं।","तथ्य 5: INSAT इसी गति से।"]},
+{q:"भू-स्थिर उपग्रह का आवर्तकाल?",opts:["24 घंटे","12 घंटे","6 घंटे","1 घंटा"],ans:0,analysis:"पृथ्वी के साथ तुल्यकालिक 24 घंटे, भूमध्य रेखा कक्षा 35786 km ऊंचाई।",facts:["तथ्य 1: ऊंचाई ~36000 km।","तथ्य 2: 1 उपग्रह से 1/3 पृथ्वी कवर।","तथ्य 3: 3 उपग्रह से पूरा कवर।","तथ्य 4: संचार के लिए उपयोग।","तथ्य 5: आवर्तकाल = पृथ्वी घूर्णन काल।"]},
+{q:"गुरुत्वाकर्षण की परास?",opts:["अनंत","सीमित","100km","पृथ्वी तक"],ans:0,analysis:"व्युत्क्रम वर्ग अनंत तक, पर 1/r² से बहुत कमजोर।",facts:["तथ्य 1: अनंत परास वाला बल।","तथ्य 2: सबसे कमजोर मौलिक बल।","तथ्य 3: विद्युत चुम्बकीय भी अनंत परास।","तथ्य 4: प्रबल बल लघु परास।","तथ्य 5: ग्रेविटॉन काल्पनिक कण।"]},
+{q:"गहराई पर g?",opts:["घटता है","बढ़ता है","समान","तुरंत शून्य"],ans:0,analysis:"g_d=g(1-d/R) गहराई से रैखिक घटता।",facts:["तथ्य 1: गहराई पर प्रभावी द्रव्यमान कम।","तथ्य 2: केंद्र पर शून्य।","तथ्य 3: खदान में वजन थोड़ा कम।","तथ्य 4: रैखिक ग्राफ गहराई के साथ।","तथ्य 5: BPSC में गहराई बनाम ऊंचाई भ्रमित करते हैं।"]},
+{q:"ज्वार-भाटा क्यों आते हैं?",opts:["चंद्रमा के गुरुत्व से","सूर्य के प्रकाश से","हवा से","घूर्णन"],ans:0,analysis:"चंद्रमा का खिंचाव + सूर्य का खिंचाव से ज्वार, चंद्रमा का प्रभाव ज्यादा।",facts:["तथ्य 1: उच्च ज्वार चंद्रमा के सामने।","तथ्य 2: वसंत ज्वार सूर्य+चंद्रमा एक रेखा।","तथ्य 3: लघु ज्वार 90 डिग्री पर।","तथ्य 4: फंडी की खाड़ी में सबसे ऊंचा ज्वार।","तथ्य 5: ज्वारीय ऊर्जा से बिजली बनती है।"]},
+{q:"G को सार्वत्रिक क्यों कहते हैं?",opts:["हर जगह समान","केवल पृथ्वी पर","बदलता है","ग्रह पर अलग"],ans:0,analysis:"G हर जगह समान 6.67e-11, इसलिए सार्वत्रिक नियतांक।",facts:["तथ्य 1: कैवेंडिश ने पहली बार मापा।","तथ्य 2: G का मान नहीं बदलता।","तथ्य 3: g बदलता है ग्रह पर।","तथ्य 4: सार्वत्रिक नियम सब पर समान।","तथ्य 5: विमीय नियतांक है।"]},
+{q:"वजन ध्रुव पर विषुवत से?",opts:["ज्यादा","कम","समान","शून्य"],ans:0,analysis:"ध्रुव पर R कम और घूर्णन नहीं, g अधिकतम 9.83, वजन ज्यादा।",facts:["तथ्य 1: विषुवत पर अपकेंद्रीय कम करता है।","तथ्य 2: ध्रुव 9.83, विषुवत 9.78।","तथ्य 3: 0.5% अंतर होता है।","तथ्य 4: पृथ्वी चपटी गोलाकार है।","तथ्य 5: वजन अंतर से द्रव्यमान नहीं।"]},
+{q:"पलायन वेग द्रव्यमान पर निर्भर?",opts:["नहीं","हाँ द्रव्यमान पर","आकार पर","रंग पर"],ans:0,analysis:"Ve=√2GM/R, पिंड के द्रव्यमान m पर नहीं, ग्रह के M पर।",facts:["तथ्य 1: पंख और रॉकेट समान Ve।","तथ्य 2: Ve ग्रह द्रव्यमान पर निर्भर।","तथ्य 3: चंद्रमा से कम Ve।","तथ्य 4: ब्लैक होल में Ve>c।","तथ्य 5: Ve प्रक्षेपण कोण पर स्वतंत्र।"]},
+{q:"गुरुत्वीय क्षेत्र तीव्रता का मात्रक?",opts:["N/kg","N","kg/N","m/s"],ans:0,analysis:"E=F/m = N/kg = m/s² g के समान।",facts:["तथ्य 1: क्षेत्र तीव्रता g ही है।","तथ्य 2: सदिश राशि है।","तथ्य 3: दिशा केंद्र की ओर।","तथ्य 4: क्षेत्र रेखाएं अरीय अंदर।","तथ्य 5: विभव प्रवणता से E=-dV/dr।"]},
+{q:"दो द्रव्यमान दूरी दोगुनी तो बल?",opts:["1/4","4 गुना","2 गुना","समान"],ans:0,analysis:"F∝1/r² दूरी दोगुनी => 1/4 बल।",facts:["तथ्य 1: व्युत्क्रम वर्ग नियम।","तथ्य 2: प्रकाश तीव्रता भी 1/r²।","तथ्य 3: द्रव्यमान दोगुना बल दोगुना।","तथ्य 4: दूरी तिगुनी 1/9 बल।","तथ्य 5: संख्यात्मक में अनुपात उपयोग।"]},
+{q:"गुरुत्वाकर्षण से कौन सा नियम नहीं निकलता?",opts:["W=mg तो परिभाषा","केपलर","ज्वार","ग्रहों की गति"],ans:0,analysis:"W=mg परिभाषा है, केपलर नियम गुरुत्व से व्युत्पन्न होते हैं।",facts:["तथ्य 1: W=mg वजन का सूत्र।","तथ्य 2: केपलर नियम प्रमाण न्यूटन से।","तथ्य 3: ज्वार गुरुत्व से।","तथ्य 4: उपग्रह गति गुरुत्व से।","तथ्य 5: g का परिवर्तन भी इसी से।"]},
+{q:"g का अधिकतम मान कहाँ?",opts:["ध्रुव","विषुवत","केंद्र","चंद्रमा"],ans:0,analysis:"ध्रुव पर अधिकतम 9.83 m/s², विषुवत न्यूनतम।",facts:["तथ्य 1: ध्रुव पर R न्यूनतम।","तथ्य 2: घूर्णन प्रभाव शून्य ध्रुव पर।","तथ्य 3: g अधिकतम 9.83।","तथ्य 4: विषुवत पर 9.78 न्यूनतम।","तथ्य 5: g औसत 9.8 लेते हैं।"]},
+{q:"विभव शून्य कहाँ?",opts:["अनंत पर","केंद्र पर","सतह पर","चंद्रमा पर"],ans:0,analysis:"अनंत पर U=0 संदर्भ, बंधा में ऋणात्मक।",facts:["तथ्य 1: U=-GMm/r अनंत पर 0।","तथ्य 2: ऋणात्मक बंधा दिखाता।","तथ्य 3: विभव V=-GM/r।","तथ्य 4: पलायन में कुल ऊर्जा शून्य।","तथ्य 5: ग्राफ अनंत पर शून्य पहुँच।"]},
+{q:"न्यूटन का नियम कब विफल?",opts:["बहुत अधिक द्रव्यमान/सापेक्षता","कम द्रव्यमान","हर जगह","कभी नहीं"],ans:0,analysis:"अधिक द्रव्यमान ब्लैक होल या अधिक गति पर आइंस्टीन GR लगता है, न्यूटन विफल।",facts:["तथ्य 1: बुध पुरस्सरण न्यूटन से नहीं।","तथ्य 2: GR ने व्याख्या की।","तथ्य 3: GPS में GR सुधार लगता है।","तथ्य 4: कम क्षेत्र में न्यूटन सटीक।","तथ्य 5: प्रबल क्षेत्र में GR आवश्यक।"]},
+{q:"गुरुत्व सबसे कमजोर क्यों?",opts:["G बहुत छोटा","द्रव्यमान कम","दूरी ज्यादा","समय"],ans:0,analysis:"G 10^-11 बहुत छोटा, इसलिए गुरुत्व सबसे कमजोर बल EM से 10^38 गुना कम।",facts:["तथ्य 1: 4 मौलिक बलों में सबसे कमजोर।","तथ्य 2: प्रबल नाभिकीय सबसे प्रबल।","तथ्य 3: G छोटा इसलिए कमजोर।","तथ्य 4: पर अनंत परास में प्रभावी।","तथ्य 5: ब्रह्मांड संरचना गुरुत्व से बनती है।"]}
+];
+let cur=0,selAns=Array(30).fill(null),reviewIndex=0,sec=30*60,tInt;
+let grid=document.getElementById('grid');
+Q.forEach((_,i)=>{let d=document.createElement('div');d.className='qn';d.innerText=i+1;d.onclick=()=>{cur=i;showQ();closePopup();};grid.appendChild(d);});
+function openPopup(){document.getElementById('qPopup').classList.add('show');updGrid();}
+function closePopup(){document.getElementById('qPopup').classList.remove('show');}
+function updGrid(){[...grid.children].forEach((e,i)=>{e.className='qn'+(i==cur?' act':'')+(selAns[i]!=null&&i!=cur?' done':'');});}
+function startQuiz(){if(!cName.value){alert('नाम लिखें');return;}document.getElementById('p-start').style.display='none';document.getElementById('p-quiz').style.display='block';tInt=setInterval(()=>{sec--;timer.innerText=`${Math.floor(sec/60)}:${(sec%60).toString().padStart(2,'0')}`;if(sec<=0){clearInterval(tInt);showResult();}},1000);showQ();}
+function showQ(){let qq=Q[cur];qL.innerText='प्रश्न '+(cur+1)+' / 30';qT.innerText=qq.q;qbadge.innerText=(cur+1)+'/30Q';bar.style.width=((cur+1)/30*100)+'%';opts.innerHTML=qq.opts.map((o,i)=>`<div class="opt ${selAns[cur]==i?'sel':''}" onclick="selAns[${cur}]=${i};showQ()">${String.fromCharCode(65+i)}. ${o}</div>`).join('');updGrid();}
+function next(){if(cur<29){cur++;showQ();}else showResult();}
+function prev(){if(cur>0){cur--;showQ();}}
+function showResult(){clearInterval(tInt);document.getElementById('p-quiz').style.display='none';document.getElementById('p-result').style.display='block';let c=selAns.filter((v,i)=>v==Q[i].ans).length;score.innerText=c+'/30';scoreP.innerText='नाम: '+cName.value+' | स्कोर: '+Math.round(c/30*100)+'%';reviewIndex=0;showAnalysis();}
+function toggleReview(){reviewBox.style.display=reviewBox.style.display=='none'?'block':'none';}
+function showAnalysis(){let qq=Q[reviewIndex];slideNo.innerText=(reviewIndex+1)+' / 30';analysisCard.innerHTML=`<b style="color:#166534">Q${reviewIndex+1}</b>: ${qq.q}<br><br>✓ सही: ${qq.opts[qq.ans]}<br>आपका: ${selAns[reviewIndex]!=null?qq.opts[selAns[reviewIndex]]:'छोड़ा गया'}<br><br>🤖 विश्लेषण: ${qq.analysis}<br><br>📚 ऑटो तथ्य:${qq.facts.map(f=>`<div class="fact">${f}</div>`).join('')}`;}
+function slideNext(){if(reviewIndex<29){reviewIndex++;showAnalysis();}}
+function slidePrev(){if(reviewIndex>0){reviewIndex--;showAnalysis();}}
+function shareTG(){let c=selAns.filter((v,i)=>v==Q[i].ans).length;let text=`*गुरुत्वाकर्षण 30Q परिणाम*%0A👤 ${cName.value}%0A✅ ${c}/30%0A🔗 https://gyankshetra.github.io/30q/%0A📢 https://t.me/gyankshetra`;window.open('https://t.me/share/url?url=https://gyankshetra.github.io/30q/&text='+text,'_blank');}
+</script>
+</body></html>
